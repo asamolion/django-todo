@@ -9,9 +9,6 @@ from .models import TodoItem
 # Create your views here.
 
 
-def todo(request):
-    return render(request, 'todo/index.html')
-
 class TodoView(generic.ListView):
     template_name = 'todo/index.html'
     context_object_name = 'todo_items'
@@ -22,4 +19,22 @@ class TodoView(generic.ListView):
 class TodoCreateView(generic.CreateView):
     model = TodoItem
     fields = ['description']
-    success_url = '/todo'    
+    success_url = '/todo'
+
+class TodoDetailView(generic.DetailView):
+    model = TodoItem
+    template_name = 'todo/detail.html'
+    context_object_name = 'item'
+
+
+class TodoDeleteView(generic.DeleteView):
+    model = TodoItem
+    template_name = 'todo/delete.html'
+    success_url = '/todo'
+
+class TodoUpdateView(generic.UpdateView):
+    model = TodoItem
+    fields = ['description']
+    template_name = 'todo/update.html'
+    success_url = '/todo'
+    # template_name_suffix = '_update_form'

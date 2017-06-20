@@ -11,7 +11,7 @@
     </tr>
     {% if todo_items %} {% for item in todo_items %}
     <tr>
-        <td>{{ item.description }}</td>
+        <td><a href="{% url 'todo:detail' item.id %}">{{ item.description }}</a></td>
         <td>{{ item.date_created }}</td>
         <td>{{ item.status }}</td>
     </tr>
