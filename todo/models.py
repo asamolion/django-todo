@@ -22,8 +22,3 @@ class TodoItem(models.Model):
 
     def __str__(self):
         return self.description
-
-    @classmethod
-    def create(cls, description):
-        item = TodoItem(description=description, status='pending')
-        return item

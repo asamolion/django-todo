@@ -21,6 +21,6 @@ class TodoView(generic.ListView):
 
 def add_item(request):
     description = request.POST['description']
-    item = TodoItem.create(description)
+    item = TodoItem(description=description)
     item.save()
     return HttpResponseRedirect('/todo')
