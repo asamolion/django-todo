@@ -17,10 +17,9 @@ class TodoView(generic.ListView):
     context_object_name = 'todo_items'
 
     def get_queryset(self):
-        return TodoItem.objects.all()
+        return TodoItem.objects.filter(status__in=['pending', 'inprogress']).order_by('status')
 
-def add_item(request):
-    description = request.POST['description']
-    item = TodoItem(description=description)
-    item.save()
-    return HttpResponseRedirect('/todo')
+class TodoCreateView(generic.CreateView):
+    model = TodoItem
+    fields = ['description']
+    success_url = '/todo'    
