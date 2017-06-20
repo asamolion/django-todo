@@ -1,10 +1,9 @@
 from django.conf.urls import url
 
-from .views import hello, current_datetime, todo
+from . import views
 
 app_name = 'todo'
 urlpatterns = [
-    url(r'^$', todo),
-    url(r'^hello/$', hello),
-    url(r'^time/$', current_datetime),
+    url(r'^$', views.TodoView.as_view(), name='index'),
+    url(r'add_item/$', views.add_item),
 ]

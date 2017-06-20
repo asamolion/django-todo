@@ -6,8 +6,10 @@ from django.utils import timezone
 
 class TodoItem(models.Model):
     description = models.CharField(max_length=256)
-    date_created = models.DateTimeField('Date created', auto_now_add=True) # auto updation
-    date_completed = models.DateTimeField('Date completed')
+    date_created = models.DateTimeField(
+        'Date created', auto_now_add=True)  # auto updation
+    date_completed = models.DateTimeField(
+        'Date completed', blank=True, null=True)
 
     status_choices = (
         ('inprogress', 'In Progress'),
@@ -17,3 +19,11 @@ class TodoItem(models.Model):
     status = models.CharField(max_length=32,
                               choices=status_choices,
                               default='pending')
+
+    def __str__(self):
+        return self.description
+
+    @classmethod
+    def create(cls, description):
+        item = TodoItem(description=description, status='pending')
+        return item

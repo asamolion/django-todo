@@ -1,3 +1,28 @@
+ {% load static %}
 
+<link rel="stylesheet" type="text/css" href="{% static 'todo/style.css' %}" />
 
 <h1>Todo application</h1>
+<table>
+    <tr>
+        <th>Description</th>
+        <th>Date Created</th>
+        <th>Status</th>
+    </tr>
+    {% if todo_items %} {% for item in todo_items %}
+    <tr>
+        <td>{{ item.description }}</td>
+        <td>{{ item.date_created }}</td>
+        <td>{{ item.status }}</td>
+    </tr>
+    {% endfor %} {% endif %}
+</table>
+
+<br />
+
+<h2>Add item</h2>
+<form action="add_item/" method="post">
+{% csrf_token %}
+    <input type="text" name="description" placeholder="What to do?" required="required">
+    <button type="submit">Add</button>
+</form>
