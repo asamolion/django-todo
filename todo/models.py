@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your models here.
 
@@ -10,7 +10,7 @@ class TodoItem(models.Model):
         'Date created', auto_now_add=True)  # auto updation
     date_completed = models.DateTimeField(
         'Date completed', blank=True, null=True)
-
+    user = models.ForeignKey(User, default=1)
     status_choices = (
         ('inprogress', 'In Progress'),
         ('complete', 'Complete'),
