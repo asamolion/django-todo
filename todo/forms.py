@@ -4,6 +4,7 @@ from .models import TodoItem
 
 
 class TodoItemModelUpdateForm(forms.ModelForm):
+    
     class Meta:
         model = TodoItem
         fields = ('description', 'status',)

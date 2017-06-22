@@ -4,8 +4,11 @@ from django.urls import reverse
 from django.template import Template, Context
 from django.views import generic
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
 import datetime
 
 from .models import TodoItem
@@ -23,27 +26,61 @@ class TodoView(LoginRequiredMixin, generic.ListView):
             status__in=['pending', 'inprogress']).order_by('status')
 
 
-class TodoCreateView(generic.CreateView):
+class TodoCreateView(LoginRequiredMixin, generic.CreateView):
+    # permission_required = 'todo.can_todo'
     model = TodoItem
     # template_name = 'todo/add_item.html'
     success_url = '/todo/'
     fields = ['description', 'user']
-    
 
-class TodoDetailView(generic.DetailView):
+
+class TodoDetailView(LoginRequiredMixin, generic.DetailView):
     model = TodoItem
+    # permission_required = 'todo.can_todo'
     template_name = 'todo/detail.html'
     context_object_name = 'item'
 
+    def dispatch(self, request, *args, **kwargs):
+        item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
+        if request.user.is_authenticated:
+            if item.user.id != request.user.id:
+                return redirect('todo:index')
+            else:
+                return super().dispatch(request)
+        return super().dispatch(request)
 
-class TodoDeleteView(generic.DeleteView):
+
+class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = TodoItem
+    # permission_required = 'todo.can_todo'
     template_name = 'todo/delete.html'
     success_url = '/todo'
 
+    def dispatch(self, request, *args, **kwargs):
+        item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
+        if request.user.is_authenticated:
+            if item.user.id != request.user.id:
+                return redirect('todo:index')
+            else:
+                return super().dispatch(request)
+        return super().dispatch(request)
 
-class TodoUpdateView(generic.UpdateView):
+class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = TodoItem
+    # permission_required = 'todo.can_todo'
     form_class = TodoItemModelUpdateForm
     template_name = 'todo/update.html'
-    success_url = '/todo'
+    success_url = '/todo/'
+
+    def get(self, request, pk):
+        item = TodoItem.objects.filter(pk=pk).all()[0]
+        form = TodoItemModelUpdateForm({
+            'description': item.description,
+            'status': item.status
+        })
+        if request.user.is_authenticated:
+            if item.user.id == request.user.id:
+                return render(request, 'todo/update.html', {'form': form})
+            else:
+                return redirect('todo:index')
+        return redirect('todo:index')

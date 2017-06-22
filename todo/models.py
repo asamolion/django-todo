@@ -22,3 +22,6 @@ class TodoItem(models.Model):
 
     def __str__(self):
         return self.description
+
+    # class Meta:
+    #     permissions = (('can_todo', 'set todo'),)
