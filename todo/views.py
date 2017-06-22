@@ -22,7 +22,10 @@ class TodoView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'todo_items'
 
     def get_queryset(self):
-        return TodoItem.objects.filter(user__exact=self.request.user).filter(
+        if (self.request.user.has_perm('todo.is_manager')):
+            return TodoItem.objects.order_by('status')
+        else:
+            return TodoItem.objects.filter(user__exact=self.request.user).filter(
             status__in=['pending', 'inprogress']).order_by('status')
 
 

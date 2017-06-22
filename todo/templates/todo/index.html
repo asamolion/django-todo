@@ -21,6 +21,9 @@ User: {{ user.get_username }}
                 <td><a href="{% url 'todo:detail' item.id %}">{{ item.description }}</a></td>
                 <td>{{ item.date_created }}</td>
                 <td>{{ item.status }}</td>
+                {% if perms.todo.is_manager %}
+                <td>{{ item.user }}</td>
+                {% endif %}
             </tr>
         {% endfor %} 
     {% endif %}
