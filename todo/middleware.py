@@ -14,7 +14,7 @@ class UserTimeMiddleware(object):
         # the view (and later middleware) are called.
 
         with open('userlog.txt', 'a') as f:
-            f.write('User: %s | Time: %s' % (
+            f.write('User: %s | Time: %s\n' % (
                 request.user, datetime.now()
             ))
         response = self.get_response(request)
