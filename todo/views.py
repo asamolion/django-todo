@@ -26,7 +26,7 @@ class TodoView(LoginRequiredMixin, generic.ListView):
             return TodoItem.objects.order_by('status')
         else:
             return TodoItem.objects.filter(user=self.request.user).filter(
-            status__in=['pending', 'inprogress']).order_by('status')
+                status__in=['pending', 'inprogress']).order_by('status')
 
 
 class TodoCreateView(LoginRequiredMixin, generic.CreateView):
@@ -47,7 +47,7 @@ class TodoDetailView(LoginRequiredMixin, generic.DetailView):
         item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
         if request.user.is_authenticated:
             if request.user.has_perm('todo.is_manager'):
-                return super().dispatch(request)        
+                return super().dispatch(request)
             if item.user.id != request.user.id:
                 return redirect('todo:index')
             else:
@@ -72,6 +72,7 @@ class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
                 return super().dispatch(request)
         return super().dispatch(request)
 
+
 class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = TodoItem
     # permission_required = 'todo.can_todo'
@@ -86,8 +87,8 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
             'status': item.status
         })
         if request.user.is_authenticated:
-            # if request.user.has_perm('todo.is_manager'):
-            #     return super().dispatch(request)
+            if request.user.has_perm('todo.is_manager'):
+                return render(request, 'todo/update.html', {'form': form})
             if item.user.id == request.user.id:
                 return render(request, 'todo/update.html', {'form': form})
             else:
