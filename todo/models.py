@@ -5,6 +5,9 @@ from django.utils import timezone
 
 
 class TodoItem(models.Model):
+    """
+    Model that defines each entry in the todo list
+    """
     description = models.CharField(max_length=256)
     date_created = models.DateTimeField(
         'Date created', auto_now_add=True)  # auto updation

@@ -18,6 +18,10 @@ from .forms import TodoItemModelCreateForm
 
 
 class TodoView(LoginRequiredMixin, generic.ListView):
+    """
+    Main page after login, lists all the TodoItems for 
+    the logged in user 
+    """
     template_name = 'todo/index.html'
     context_object_name = 'todo_items'
 
@@ -30,20 +34,30 @@ class TodoView(LoginRequiredMixin, generic.ListView):
 
 
 class TodoCreateView(LoginRequiredMixin, generic.CreateView):
-    # permission_required = 'todo.can_todo'
+    """
+    Generic view to create a single TodoItem for 
+    the logged in user
+    """
     model = TodoItem
-    # template_name = 'todo/add_item.html'
     success_url = '/todo/'
     fields = ['description', 'user']
 
 
 class TodoDetailView(LoginRequiredMixin, generic.DetailView):
+    """
+    displays the detail of a single item in todo list for
+    a specific user
+    """
     model = TodoItem
     # permission_required = 'todo.can_todo'
     template_name = 'todo/detail.html'
     context_object_name = 'item'
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Override dispatch method to handle user and manager
+        permissions
+        """
         item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
         if request.user.is_authenticated:
             if request.user.has_perm('todo.is_manager'):
@@ -56,12 +70,19 @@ class TodoDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
+    """
+    View to delete TodoItem for specific user
+    """
     model = TodoItem
     # permission_required = 'todo.can_todo'
     template_name = 'todo/delete.html'
     success_url = '/todo'
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Override dispath method to include manager permissions and
+        and user access permissions
+        """
         item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
         if request.user.is_authenticated:
             if request.user.has_perm('todo.is_manager'):
@@ -74,6 +95,9 @@ class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
 
 
 class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
+    """
+    View that updates the TodoItem for a specific user
+    """
     model = TodoItem
     # permission_required = 'todo.can_todo'
     form_class = TodoItemModelUpdateForm
@@ -81,6 +105,10 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     success_url = '/todo/'
 
     def get(self, request, pk):
+        """
+        Override get method to handle manager and
+        user permissions
+        """
         item = TodoItem.objects.filter(pk=pk).all()[0]
         form = TodoItemModelUpdateForm({
             'description': item.description,

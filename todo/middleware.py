@@ -1,14 +1,13 @@
 from datetime import datetime
 
 class UserTimeMiddleware(object):
-    
+    '''
+    Middleware that logs the current user and the timestamp
+    on each request
+    '''
     def __init__(self, get_response):
         self.get_response = get_response
     
-    def process_request(self, request):
-        print('hello ')
-        return None
-
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
