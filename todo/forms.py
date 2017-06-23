@@ -15,16 +15,19 @@ class TodoItemModelUpdateForm(forms.ModelForm):
         cleaned_data = super(TodoItemModelUpdateForm, self).clean()
         status = cleaned_data.get('status')
 
-        date_created = self.instance.date_created
+        date_created = self.instance.date_created.replace(tzinfo=None)
         now = datetime.utcnow()
-        print(date_created)
-        print(type(date_created))
-        print(now)
-        print(type(now))
-        # date_created.time()
-        # delta = now - date_created
-        # days = delta.days # days should be greater than 3
-        
+        date_created.time()
+        delta = now - date_created
+        days = delta.days  # days should be greater than 3g
+        if (status == 'complete'):
+            if days < 3:
+                raise ValidationError(
+                    _('Completion not yet allowed: days = %(value)s'),
+                    code='too_quick',
+                    params={'value': days},
+                )
+        return cleaned_data
 
 
 class TodoItemModelCreateForm(forms.ModelForm):

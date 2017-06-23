@@ -105,10 +105,7 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
         user permissions
         """
         item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
-        form = TodoItemModelUpdateForm({
-            'description': item.description,
-            'status': item.status
-        })
+        form = TodoItemModelUpdateForm(instance=item)
         if request.user.has_perm('todo.is_manager'):
             return render(request, 'todo/update.html', {'form': form})
         elif item.user.id == request.user.id:
