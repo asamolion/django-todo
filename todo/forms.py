@@ -11,9 +11,6 @@ class TodoItemModelUpdateForm(forms.ModelForm):
         model = TodoItem
         fields = ('description', 'status',)
 
-    """
-    DEAL WITH THIS LATER
-
     def clean(self):
         cleaned_data = super(TodoItemModelUpdateForm, self).clean()
         status = cleaned_data.get('status')
@@ -24,7 +21,11 @@ class TodoItemModelUpdateForm(forms.ModelForm):
         print(type(date_created))
         print(now)
         print(type(now))
-    """
+        # date_created.time()
+        # delta = now - date_created
+        # days = delta.days # days should be greater than 3
+        
+
 
 class TodoItemModelCreateForm(forms.ModelForm):
     """
