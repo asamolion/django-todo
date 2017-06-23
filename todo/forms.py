@@ -1,5 +1,6 @@
 from django import forms
 from datetime import datetime
+from django.core.exceptions import ValidationError
 from .models import TodoItem
 
 
@@ -23,7 +24,7 @@ class TodoItemModelUpdateForm(forms.ModelForm):
         if (status == 'complete'):
             if days < 3:
                 raise ValidationError(
-                    _('Completion not yet allowed: days = %(value)s'),
+                    'Completion not yet allowed (minimum days should be 3): days = %(value)s',
                     code='too_quick',
                     params={'value': days},
                 )
