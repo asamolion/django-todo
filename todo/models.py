@@ -13,7 +13,7 @@ class TodoItem(models.Model):
         'Date created', auto_now_add=True)  # auto updation
     date_completed = models.DateTimeField(
         'Date completed', blank=True, null=True)
-    user = models.ForeignKey(User, default=1)
+    user = models.ForeignKey(User, blank=True, null=True)
     status_choices = (
         ('inprogress', 'In Progress'),
         ('complete', 'Complete'),

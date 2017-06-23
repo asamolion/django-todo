@@ -49,7 +49,6 @@ class TodoDetailView(LoginRequiredMixin, generic.DetailView):
     a specific user
     """
     model = TodoItem
-    # permission_required = 'todo.can_todo'
     template_name = 'todo/detail.html'
     context_object_name = 'item'
 
@@ -58,15 +57,13 @@ class TodoDetailView(LoginRequiredMixin, generic.DetailView):
         Override dispatch method to handle user and manager
         permissions
         """
-        item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
-        if request.user.is_authenticated:
-            if request.user.has_perm('todo.is_manager'):
-                return super().dispatch(request)
-            if item.user.id != request.user.id:
-                return redirect('todo:index')
-            else:
-                return super().dispatch(request)
-        return super().dispatch(request)
+        item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
+        if request.user.has_perm('todo.is_manager'):
+            return super().dispatch(request)
+        elif item.user.id != request.user.id:
+            return redirect('todo:index')
+        else:
+            return super().dispatch(request)
 
 
 class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
@@ -74,7 +71,6 @@ class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
     View to delete TodoItem for specific user
     """
     model = TodoItem
-    # permission_required = 'todo.can_todo'
     template_name = 'todo/delete.html'
     success_url = '/todo'
 
@@ -83,15 +79,14 @@ class TodoDeleteView(LoginRequiredMixin, generic.DeleteView):
         Override dispath method to include manager permissions and
         and user access permissions
         """
-        item = TodoItem.objects.filter(pk=kwargs['pk']).all()[0]
-        if request.user.is_authenticated:
-            if request.user.has_perm('todo.is_manager'):
-                return super().dispatch(request)
-            if item.user.id != request.user.id:
-                return redirect('todo:index')
-            else:
-                return super().dispatch(request)
-        return super().dispatch(request)
+        item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
+
+        if request.user.has_perm('todo.is_manager'):
+            return super().dispatch(request)
+        elif item.user.id != request.user.id:
+            return redirect('todo:index')
+        else:
+            return super().dispatch(request)
 
 
 class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -99,26 +94,39 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     View that updates the TodoItem for a specific user
     """
     model = TodoItem
-    # permission_required = 'todo.can_todo'
     form_class = TodoItemModelUpdateForm
     template_name = 'todo/update.html'
     success_url = '/todo/'
 
-    def get(self, request, pk):
+    
+    def get(self, request, *args, **kwargs):
         """
         Override get method to handle manager and
         user permissions
         """
-        item = TodoItem.objects.filter(pk=pk).all()[0]
+        item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
         form = TodoItemModelUpdateForm({
             'description': item.description,
             'status': item.status
         })
-        if request.user.is_authenticated:
-            if request.user.has_perm('todo.is_manager'):
-                return render(request, 'todo/update.html', {'form': form})
-            if item.user.id == request.user.id:
-                return render(request, 'todo/update.html', {'form': form})
-            else:
-                return redirect('todo:index')
-        return redirect('todo:index')
+        if request.user.has_perm('todo.is_manager'):
+            return render(request, 'todo/update.html', {'form': form})
+        elif item.user.id == request.user.id:
+            return render(request, 'todo/update.html', {'form': form})
+        else:
+            return redirect('todo:index')
+
+# UTILITY FUNCTIONS
+
+# def restrict_access(self, request, *args, **kwargs):
+#     """
+#     Override get/dispatch method to handle manager and
+#     user permissions
+#     """
+#     item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
+#         if request.user.has_perm('todo.is_manager'):
+#             return super().dispatch(request)
+#         elif item.user.id != request.user.id:
+#             return redirect('todo:index')
+#         else:
+#             return super().dispatch(request)
