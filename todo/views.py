@@ -97,7 +97,6 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     form_class = TodoItemModelUpdateForm
     template_name = 'todo/update.html'
     success_url = '/todo/'
-
     
     def get(self, request, *args, **kwargs):
         """
