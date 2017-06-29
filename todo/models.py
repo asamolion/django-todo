@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 
@@ -25,6 +26,12 @@ class TodoItem(models.Model):
 
     def __str__(self):
         return self.description
-
+    
+    def clean(self):
+        if self.status == 'pending':
+            print('hello')
+        else:
+            print('nothello')
+            raise ValidationError
     class Meta:
         permissions = (('is_manager', 'manager perms'),)
