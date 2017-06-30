@@ -1,0 +1,10 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'todo/style.css' %}" />
+
+<h1>Top 3 users with most tasks completed</h1>
+<ul>
+    {% for user in most_completed %}
+        <li>Username: {{ user.0 }} - Tasks: {{ user.1 }}</li>
+    {% endfor %}
+</ul>

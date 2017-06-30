@@ -1,3 +1,7 @@
+import datetime
+import operator
+from collections import defaultdict 
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -8,9 +12,14 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import User
+from django.views import View
+from django.db.models import Q
+from django.db.models import Count
+from django.db.models import Max
+from collections import defaultdict 
+from collections import Counter
 
-
-import datetime
 
 from .models import TodoItem
 from .forms import TodoItemModelUpdateForm
@@ -98,7 +107,7 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
     form_class = TodoItemModelUpdateForm
     template_name = 'todo/update.html'
     success_url = '/todo/'
-    
+
     def get(self, request, *args, **kwargs):
         """
         Override get method to handle manager and
@@ -112,6 +121,25 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
             return render(request, 'todo/update.html', {'form': form})
         else:
             return redirect('todo:index')
+
+
+class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'todo.is_manager'
+    template_name = 'todo/summary.html'
+
+    def get(self, request):
+        user_objects = User.objects
+        todo_objects = TodoItem.objects.filter(status='complete')
+        the_counter = defaultdict(int)
+        for user in user_objects.all():
+            completed_tasks = todo_objects.filter(user=user.id)
+            for task in completed_tasks:
+                the_counter[user.username] += 1 
+        sorted_counter = sorted(the_counter.items(), key=operator.itemgetter(1), reverse=True)[:3]
+        context = {}
+
+        context['most_completed'] = sorted_counter
+        return render(request, self.template_name, context)
 
 # UTILITY FUNCTIONS
 
