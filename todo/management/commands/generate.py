@@ -1,0 +1,48 @@
+import random
+import string
+import calendar
+
+from todo.models import TodoItem
+from django.contrib.auth.models import User
+from datetime import datetime, timedelta
+
+from django.core.management.base import BaseCommand
+
+
+# UTILITY FUNCTIONS
+def randomword(length):
+    '''
+    returns a random word of size 'length'
+    '''
+    return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
+
+
+class Command(BaseCommand):
+    def handle(self, **options):
+        status_list = ['inprogress', 'pending', 'complete']
+
+        for i in range(20):
+            username = randomword(5)
+            # password = 'arbisoft123'
+            user = User.objects.create_user(
+                username, password='arbisoft123'
+            )
+
+            task_list = []
+            for j in range(25):
+                status = random.choice(status_list)
+                #
+                firstJan = datetime.today().replace(day=1, month=1)
+                days = abs((datetime.now() - firstJan).days)
+                randomDay = firstJan + timedelta(days=random.randint(0, days))
+                #
+                if status == 'complete':
+                    date_completed = randomDay
+
+                task_list.append(TodoItem(
+                    description=randomword(25),
+                    status=status,
+                    date_completed=(
+                        date_completed if 'date_completed' in locals() else None),
+                    user=user))
+            TodoItem.objects.bulk_create(task_list)
