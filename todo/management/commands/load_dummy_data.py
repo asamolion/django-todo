@@ -44,7 +44,5 @@ class Command(BaseCommand):
                 task_list.append(TodoItem(
                     description=randomword(25),
                     status=status,
-                    date_completed=(
-                        date_completed if 'date_completed' in locals() else None),
-                    user=user))
+                    date_completed=date_completed,
             TodoItem.objects.bulk_create(task_list)
