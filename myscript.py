@@ -37,11 +37,12 @@ for i in range(20):
         #
         if status == 'complete':
             date_completed = randomDay
+        else: 
+            date_completed = None
 
         task_list.append(TodoItem(
             description=randomword(25),
             status=status,
-            date_completed=(
-                date_completed if 'date_completed' in locals() else None),
+            date_completed=date_completed,
             user=user))
     TodoItem.objects.bulk_create(task_list)
