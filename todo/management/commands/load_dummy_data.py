@@ -5,6 +5,7 @@ import calendar
 from todo.models import TodoItem
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 from django.core.management.base import BaseCommand
 
@@ -32,8 +33,8 @@ class Command(BaseCommand):
             for j in range(25):
                 status = random.choice(status_list)
                 #
-                firstJan = datetime.today().replace(day=1, month=1)
-                days = abs((datetime.now() - firstJan).days)
+                firstJan = timezone.make_aware(datetime.today().replace(day=1, month=1))
+                days = abs((timezone.make_aware(datetime.now()) - firstJan).days)
                 randomDay = firstJan + timedelta(days=random.randint(0, days))
                 #
                 if status == 'complete':
@@ -45,4 +46,5 @@ class Command(BaseCommand):
                     description=randomword(25),
                     status=status,
                     date_completed=date_completed,
+                    user=user))
             TodoItem.objects.bulk_create(task_list)
