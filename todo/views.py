@@ -1,6 +1,6 @@
 import datetime
 import operator
-from collections import defaultdict 
+from collections import defaultdict
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,16 +9,12 @@ from django.template import Template, Context
 from django.views import generic
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models import Count, Min, Sum, Avg, Subquery
 from django.views import View
-from django.db.models import Q
-from django.db.models import Count
-from django.db.models import Max
-from collections import defaultdict 
-from collections import Counter
+from collections import defaultdict
 
 
 from .models import TodoItem
@@ -128,30 +124,15 @@ class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = 'todo/summary.html'
 
     def get(self, request):
-        user_objects = User.objects
-        todo_objects = TodoItem.objects.filter(status='complete')
-        the_counter = defaultdict(int)
-        for user in user_objects.all():
-            completed_tasks = todo_objects.filter(user=user.id)
-            for task in completed_tasks:
-                the_counter[user.username] += 1 
-        sorted_counter = sorted(the_counter.items(), key=operator.itemgetter(1), reverse=True)[:3]
         context = {}
+        users = User.objects.filter(todoitem__status='complete').annotate(Count('todoitem')).order_by('-todoitem__count')[:3]
+        
+        context['most_completed'] = users
+        
+        print(context['most_completed'])
+        #################################
 
-        context['most_completed'] = sorted_counter
+        # Users with most completed tasks who joined in the last 3 months
+        
+        #################################
         return render(request, self.template_name, context)
-
-# UTILITY FUNCTIONS
-
-# def restrict_access(self, request, *args, **kwargs):
-#     """
-#     Override get/dispatch method to handle manager and
-#     user permissions
-#     """
-#     item = get_object_or_404(TodoItem.objects.all(), pk=kwargs['pk'])
-#         if request.user.has_perm('todo.is_manager'):
-#             return super().dispatch(request)
-#         elif item.user.id != request.user.id:
-#             return redirect('todo:index')
-#         else:
-#             return super().dispatch(request)
