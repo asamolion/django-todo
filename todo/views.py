@@ -129,7 +129,6 @@ class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
         
         context['most_completed'] = users
         
-        print(context['most_completed'])
         #################################
 
         # Users with most completed tasks who joined in the last 3 months
