@@ -38,6 +38,8 @@ class Command(BaseCommand):
                 #
                 if status == 'complete':
                     date_completed = randomDay
+                else: 
+                    date_completed = None
 
                 task_list.append(TodoItem(
                     description=randomword(25),
