@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import operator
 from collections import defaultdict
 
@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Count, Min, Sum, Avg, Subquery
 from django.views import View
+from django.utils import timezone
 from collections import defaultdict
 
 
@@ -125,13 +126,22 @@ class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     def get(self, request):
         context = {}
-        users = User.objects.filter(todoitem__status='complete').annotate(Count('todoitem')).order_by('-todoitem__count')[:3]
-        
+        # Users with most completed tasks
+        users = User.objects.filter(todoitem__status='complete').annotate(
+            Count('todoitem')).order_by('-todoitem__count')[:3]
         context['most_completed'] = users
-        
+        for user in users:
+            print(user.todoitem__count)
         #################################
-
         # Users with most completed tasks who joined in the last 3 months
-        
+        current_month = timezone.make_aware(datetime.now())
+        one_month_ago = current_month.replace(month=(lambda m: m-1 if m > 1 else 12)(current_month.month))
+        print(current_month)
+        print(one_month_ago)
+        users = User.objects.filter(todoitem__status='complete').filter(todoitem__date_completed__gte=one_month_ago).annotate(
+            Count('todoitem')).order_by('-todoitem__count')[:3]
+        for user in users:
+            print(user.todoitem__count)
+        context['most_completed_in_last_month'] = users
         #################################
         return render(request, self.template_name, context)

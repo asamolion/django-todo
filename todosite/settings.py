@@ -74,15 +74,19 @@ WSGI_APPLICATION = 'todosite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'tododb',
+    #     'USER': 'todoadmin',
+    #     'PASSWORD': 'todo123',
+    #     'HOST': 'localhost',
+    #     'PORT': '',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tododb',
-        'USER': 'todoadmin',
-        'PASSWORD': 'todo123',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_DIR, 'yourdatabasename.db'),
     }
 }
 
