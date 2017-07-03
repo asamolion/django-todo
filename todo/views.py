@@ -128,38 +128,32 @@ class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request):
         context = {}
         # Users with most completed tasks
-        users = User.objects.filter(todoitem__status='complete').annotate(
+        context['all_time'] = User.objects.filter(todoitem__status='complete').annotate(
             Count('todoitem')).order_by('-todoitem__count')[:3]
-        context['all_time'] = users
         #################################
         # Users with most completed tasks who joined in the last 3 months
         current_month = timezone.make_aware(datetime.now())
-        # one_month_ago = current_month.replace(
-        #     month=(lambda m: m - 1 if m > 1 else 12)(current_month.month))
         one_month_ago = current_month - timedelta(days=30)
-        users = User.objects.filter(
+        context['complete_last_month'] = User.objects.filter(
             todoitem__status='complete',
             todoitem__date_completed__gte=one_month_ago).annotate(
                 Count('todoitem')).order_by('-todoitem__count')[:3]
-        context['complete_last_month'] = users
         #################################
         # Users with most tasks completed in last month by users who joined
         # within last 3 months list (top 3)
         three_months_ago = current_month - timedelta(days=90)
-        users = User.objects.filter(
+        context['complete_last_month_with_3_months'] = User.objects.filter(
             todoitem__status='complete',
             date_joined__gte=three_months_ago,
             todoitem__date_completed__gte=one_month_ago).annotate(
                 Count('todoitem')).order_by('-todoitem__count')[:3]
-        context['complete_last_month_with_3_months'] = users
         #################################
         # Users with most tasks in progress since last 2 months user list (top
         # 3)
         two_months_ago = current_month - timedelta(days=60)
-        users = User.objects.filter(
+        context['inprogress_since_last_2_months'] = User.objects.filter(
             todoitem__date_created__gte=two_months_ago,
             todoitem__status='inprogress').annotate(
                 Count('todoitem')).order_by('-todoitem__count')[:3]
-        context['inprogress_since_last_2_months'] = users
         #################################
         return render(request, self.template_name, context)
