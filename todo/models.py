@@ -23,7 +23,8 @@ class TodoItem(models.Model):
     status = models.CharField(max_length=32,
                               choices=status_choices,
                               default='pending')
-
+    log = models.TextField()
+    
     def __str__(self):
         return self.description
     
