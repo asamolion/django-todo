@@ -27,11 +27,11 @@ class TodoItem(models.Model):
     def __str__(self):
         return self.description
     
-    def clean(self):
-        if self.status == 'pending':
-            print('hello')
-        else:
-            print('nothello')
-            raise ValidationError
+    # def clean(self):
+    #     if self.status == 'pending':
+    #         print('hello')
+    #     else:
+    #         print('nothello')
+    #         raise ValidationError
     class Meta:
         permissions = (('is_manager', 'manager perms'),)
