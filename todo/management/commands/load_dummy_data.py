@@ -25,8 +25,14 @@ class Command(BaseCommand):
         for i in range(20):
             username = randomword(5)
             # password = 'arbisoft123'
+
+            start_date = datetime.now().replace(day=1, month=1, year=2015).toordinal()
+            end_date = datetime.now().toordinal()
+            random_day = datetime.fromordinal(random.randint(start_date, end_date))
+            random_day = timezone.make_aware(random_day)
             user = User.objects.create_user(
-                username, password='arbisoft123'
+                username, password='arbisoft123',
+                date_joined=random_day,
             )
 
             task_list = []
