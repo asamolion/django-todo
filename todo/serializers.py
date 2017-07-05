@@ -11,9 +11,9 @@ class TodoItemSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(
+    todoitems = serializers.PrimaryKeyRelatedField(
         many=True, queryset=TodoItem.objects.all())
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'snippets')
+        fields = ('id', 'username', 'todoitems')

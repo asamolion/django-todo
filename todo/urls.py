@@ -6,6 +6,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'todo', views.TodoViewSet)
+router.register(r'users', views.UserViewSet)
 
 app_name = 'todo'
 urlpatterns = [
