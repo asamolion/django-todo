@@ -18,11 +18,40 @@ from django.views import View
 from django.utils import timezone
 from collections import defaultdict
 
+from rest_framework import viewsets
+from rest_framework import mixins
+from rest_framework import status
+from rest_framework import generics
 
 from .models import TodoItem
+from .serializers import TodoItemSerializer
 from .forms import TodoItemModelUpdateForm
 from .forms import TodoItemModelCreateForm
 # Create your views here.
+
+
+class TodoViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows TodoItems to be edited or viewed
+    '''
+    queryset = TodoItem.objects.all()
+    serializer_class = TodoItemSerializer
+
+
+class TodoItemList(mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   generics.GenericAPIView):
+    '''
+    List all snippets, or create a new snippet
+    '''
+    queryset = TodoItem.objects.all()
+    serializer_class = TodoItemSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class TodoView(LoginRequiredMixin, generic.ListView):
@@ -121,7 +150,7 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
             return redirect('todo:index')
 
 
-class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class SummaryView(PermissionRequiredMixin, View):
     permission_required = 'todo.is_manager'
     template_name = 'todo/summary.html'
 
