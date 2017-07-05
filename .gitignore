@@ -101,4 +101,4 @@ ENV/
 # my stuff
 ./todosite/settings.py
 ./todo_update_log.txt
-./userlog.txt
+userlog.txt

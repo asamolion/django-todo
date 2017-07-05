@@ -1,21 +1,14 @@
-from datetime import datetime, timedelta, date
-import operator
-import random
-from collections import defaultdict
-
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.views import View
-
+from django.db.models import Count
 from rest_framework import viewsets
-from rest_framework import mixins
 
 from .models import TodoItem
 from .serializers import TodoItemSerializer, UserSerializer
 from .forms import TodoItemModelUpdateForm
-from .forms import TodoItemModelCreateForm
 # Create your views here.
 
 
