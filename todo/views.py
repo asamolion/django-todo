@@ -37,23 +37,6 @@ class TodoViewSet(viewsets.ModelViewSet):
     queryset = TodoItem.objects.all()
     serializer_class = TodoItemSerializer
 
-
-class TodoItemList(mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   generics.GenericAPIView):
-    '''
-    List all snippets, or create a new snippet
-    '''
-    queryset = TodoItem.objects.all()
-    serializer_class = TodoItemSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
 class TodoView(LoginRequiredMixin, generic.ListView):
     """
     Main page after login, lists all the TodoItems for 
