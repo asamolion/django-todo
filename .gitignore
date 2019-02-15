@@ -98,5 +98,7 @@ ENV/
 # mypy
 .mypy_cache/
 
-# the settings
+# my stuff
 ./todosite/settings.py
+./todo_update_log.txt
+userlog.txt

@@ -1,28 +1,31 @@
-from datetime import datetime, timedelta, date
-import operator
-import random
-from collections import defaultdict
-
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.template import Template, Context
 from django.views import generic
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Count, Min, Sum, Avg, Subquery
 from django.views import View
-from django.utils import timezone
-from collections import defaultdict
-
+from django.db.models import Count
+from rest_framework import viewsets
 
 from .models import TodoItem
+from .serializers import TodoItemSerializer, UserSerializer
 from .forms import TodoItemModelUpdateForm
-from .forms import TodoItemModelCreateForm
 # Create your views here.
+
+
+class TodoViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows TodoItems to be edited or viewed
+    '''
+    queryset = TodoItem.objects.all()
+    serializer_class = TodoItemSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint for Users
+    '''
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class TodoView(LoginRequiredMixin, generic.ListView):
@@ -121,7 +124,7 @@ class TodoUpdateView(LoginRequiredMixin, generic.UpdateView):
             return redirect('todo:index')
 
 
-class SummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class SummaryView(PermissionRequiredMixin, View):
     permission_required = 'todo.is_manager'
     template_name = 'todo/summary.html'
 

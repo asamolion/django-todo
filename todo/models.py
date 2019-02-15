@@ -14,7 +14,7 @@ class TodoItem(models.Model):
         'Date created', auto_now_add=True)  # auto updation
     date_completed = models.DateTimeField(
         'Date completed', blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(User, related_name='todoitems', on_delete=models.CASCADE)
     status_choices = (
         ('inprogress', 'In Progress'),
         ('complete', 'Complete'),
@@ -27,12 +27,5 @@ class TodoItem(models.Model):
     
     def __str__(self):
         return self.description
-    
-    # def clean(self):
-    #     if self.status == 'pending':
-    #         print('hello')
-    #     else:
-    #         print('nothello')
-    #         raise ValidationError
     class Meta:
         permissions = (('is_manager', 'manager perms'),)
